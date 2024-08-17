@@ -10,7 +10,7 @@ const server = express();
 server.use(express.json());
 server.use(morgan("dev"));
 //routes
-server.use("/", authroutes);
+server.use("/api/v1/auth", authroutes);
 
 server.listen(process.env.port, () => {
   console.log(`Server started at port  ${process.env.port}`);
