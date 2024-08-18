@@ -1,40 +1,56 @@
-import JWT from "jsonwebtoken";
-import usermodel from "../models/usermodel.js";
-
-//Protected Routes token base
-export const requireSignIn = async (req, res, next) => {
+import jwt from "jsonwebtoken";
+import userModel from "../models/usermodel.js";
+import dotenv from "dotenv"
+dotenv.config();
+// Middleware to check if the user is signed in
+export const requiresign = async (req, res, next) => {
   try {
-    const decode = JWT.verify(
-      req.headers.authorization,
-      process.env.JWT_SECRET
-    );
-    req.user = decode;
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Authorization token is required",
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; 
     next();
   } catch (error) {
-    console.log(error);
+    console.error("JWT verification failed:", error);
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token or token expired",
+    });
   }
 };
 
-//admin acceess
-export const isAdmin = async (req, res, next) => {
+// Middleware to check if the user is an admin
+export const isadmin = async (req, res, next) => {
   try {
     const {email}=req.body;
-
-    const user = await usermodel.findOne({email});
-    if (user.role !== 1) {
-       res.status(401).send({
+    const user = await userModel.findOne({email});
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: "UnAuthorized Access",
+        message: "User not found",
       });
-    } else {
-      next();
     }
+
+    if (user.role !== 1) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+else
+    next();
   } catch (error) {
-    console.log(error);
-    res.status(401).send({
+    console.error("Error in isadmin middleware:", error);
+    return res.status(500).json({
       success: false,
-      error,
-      message: "Error in admin middelware",
+      error: error.message || error,
+      message: "Error in middleware",
     });
   }
 };

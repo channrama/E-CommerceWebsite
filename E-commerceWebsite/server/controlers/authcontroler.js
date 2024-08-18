@@ -1,5 +1,6 @@
 //all authentication controlers are written in this file
 import { hashpassword, comparepassword } from "../helper/authhelper.js";
+import { requiresign } from "../middleware/authmiddleware.js";
 import userModel from "../models/usermodel.js";
 import jwt from "jsonwebtoken";
 //user registration start here
@@ -97,3 +98,11 @@ export const logincontroler = async (req, res) => {
 };
 //login Server end's here
 
+//test controler
+export const testcontroler = (req, res) => {
+  try {
+    res.send("protected");
+  } catch (error) {
+    res.send(error);
+  }
+};
