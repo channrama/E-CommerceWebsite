@@ -43,6 +43,7 @@ export const registercontrler = async (req, res) => {
     });
   }
 };
+//regiter function ends
 
 //user login function start here
 export const logincontroler = async (req, res) => {
@@ -57,7 +58,7 @@ export const logincontroler = async (req, res) => {
     //geting user from database by email
     const user = await userModel.findOne({ email });
     if (!user) {
-     return  res.status(404).send({
+      return res.status(404).send({
         success: false,
         message: "Email not registerd",
       });
@@ -65,7 +66,7 @@ export const logincontroler = async (req, res) => {
     //checking password with hashedpassword
     const match = await comparepassword(password, user.password);
     if (!match)
-    return  res.status(200).send({
+      return res.status(200).send({
         success: false,
         message: "password is incorrect",
       });
@@ -82,6 +83,8 @@ export const logincontroler = async (req, res) => {
         email: user.email,
         phone: user.phone,
         address: user.address,
+        role:user.role,
+        _id:user._id
       },
       token,
       //user deatils sendind as response
@@ -92,3 +95,5 @@ export const logincontroler = async (req, res) => {
     });
   }
 };
+//login Server end's here
+
